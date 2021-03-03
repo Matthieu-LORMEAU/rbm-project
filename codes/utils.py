@@ -20,9 +20,6 @@ def load_alpha_digits():
     return loadmat('data/alpha_digits/binaryalphadigs.mat')
 
 
-print(load_alpha_digits())
-
-
 def load_mnist(train_data=True, test_data=False):
     """
     Get mnist data from the official website and
