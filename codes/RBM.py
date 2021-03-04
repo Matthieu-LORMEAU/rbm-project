@@ -6,7 +6,7 @@ import math
 class RBM:
     """Create an RBM object"""
 
-    def __init__(self, input__image_size, output_size):
+    def __init__(self, input_image_size, output_size):
         self.W = np.random.normal(0, 0.01, (input_size, output_size))
         self.a = np.zeros(input_size)
         self.b = np.zeros(output_size)
