@@ -7,12 +7,12 @@ class RBM:
     """Create an RBM object"""
 
     def __init__(self, input_image_size, output_size):
-        self.W = np.random.normal(0, 0.01, (input_size, output_size))
-        self.a = np.zeros(input_size)
-        self.b = np.zeros(output_size)
         self.input_image_size = input_image_size
         self.input_size = math.prod(input_image_size)
         self.output_size = output_size
+        self.W = np.random.normal(0, 0.01, (self.input_size, output_size))
+        self.a = np.zeros(self.input_size)
+        self.b = np.zeros(output_size)
 
     def input_output(self, input):
         # shape data number * outputsize
@@ -51,14 +51,11 @@ class RBM:
         for e in range(num_epochs):
             # shuffle data
             X = X[np.random.permutation(n_samples), :]
-
-            for b in range(np.ceiling(n_samples / batch_size)):
+            for b in range(int(np.ceil(n_samples / batch_size))):
                 # batch borders
                 beg = b * batch_size
-                end = np.min(beg + batch_size, n_samples)
+                end = min(beg + batch_size, n_samples)
                 n = end - beg
-                print(n)
-                print(X[beg:end, :].shape)
                 # Gibbs sampling one iteration
                 v0 = X[beg:end, :]
                 prob_h0_v0 = self.input_output(v0)
@@ -80,8 +77,9 @@ class RBM:
             # reconstruction error
             error = self.reconstruction_error(X)
             errors.append(error)
-            epoch_stats = "Epoch {} Complete: Reconstruction Error: {:.7f}".format(e + 1, error)
-            print(epoch_stats)
+            if (e+1) % 100 == 0:
+                epoch_stats = "Epoch {} Complete: Reconstruction Error: {:.7f}".format(e + 1, error)
+                print(epoch_stats)
 
         return errors
 
