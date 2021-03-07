@@ -12,7 +12,7 @@ class RBM:
         Parameters
         ----------
         input_size : int
-            number of features
+            number of input features
         output_size : int
             number of hidden units
         """

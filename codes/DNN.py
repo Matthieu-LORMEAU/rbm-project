@@ -9,16 +9,18 @@ class DNN:
     Inputs are flattened to one dimensional arrays.
     """
 
-    def __init__(self, input_shape: tuple[int], layers_sizes: Iterable[int]):
+    def __init__(self, input_size: int, layers_sizes: Iterable[int]):
         """Instantiate a DNN
 
         Parameters
         ----------
-        input_shape : tuple[int]
+        input_size : int
+            number of input features
         layers_sizes : Iterable[int]
             List of layers where each value is an integer corresponding to the number of units of each layer
         """
-        self.layers = [RBM(input_shape, layers_sizes[0])]
+        self.input_size = input_size
+        self.layers = [RBM(input_size, layers_sizes[0])]
         for i in range(len(layers_sizes) - 1):
             self.layers.append(RBM(layers_sizes[i], layers_sizes[i + 1]))
 
@@ -38,11 +40,6 @@ class DNN:
         lr : float, optional
             learning rate, by default 0.1
 
-        Returns
-        -------
-        list[float]
-            List of reconstruction errors for each epoch ??????????????????????
-
         Raises
         ------
         ValueError
@@ -56,10 +53,12 @@ class DNN:
             l.train(X, batch_size, num_epochs, lr)
             X = l.input_output(X)
 
+        self.pretrained = True
+
     def retropropagation(self):
         ...
 
-    def input_output(self):
+    def input_output(self, input):
         """Compute the output for a certain input
 
         Parameters
@@ -72,10 +71,12 @@ class DNN:
         ndarray:
             (number of samples, last_layer_size)
         """
-        return expit(input @ self.W + self.b)
+        ...
 
     def generate_image_DBN(self):
-        ...
+        if self.pretrained:
+            ...
 
     def test_DNN(self):
-        ...
+        if self.trained:
+            ...
