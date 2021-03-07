@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.special import expit
 import math
-
+from codes.utils import reconstruction_error
 
 class RBM:
     """Create an RBM object."""
@@ -53,23 +53,7 @@ class RBM:
         # shape data number * inputsize
         return expit(output @ self.W.T + self.a)
 
-    def reconstruction_error(self, X):
-        """Return the reconstruction error score for an array of inputs
-
-        Parameters
-        ----------
-        X : ndarray
-            (number of samples, input_size)
-
-        Returns
-        -------
-        float
-            reconstruction error
-        """
-        X_tild = self.output_input(self.input_output(X))
-        return np.linalg.norm(X - X_tild)
-
-    def train(self, X, batch_size, num_epochs=100, lr=0.1):
+    def train(self, X, batch_size, num_epochs=100, lr=0.1, errors=True):
         """Train the RBM object
 
         Parameters
@@ -81,6 +65,8 @@ class RBM:
             number of epochs, by default 100
         lr : float, optional
             learning rate, by default 0.1
+        errors : bool,
+            to return and print the reconstruction score
 
         Returns
         -------
@@ -126,14 +112,19 @@ class RBM:
                 self.W = self.W + grad_W * lr/n
 
             # reconstruction error
-            error = self.reconstruction_error(X)
+            p_h = self.input_output(X)
+            h = (np.random.random_sample(self.output_size) < p_h) * 1
+            p_X_tild = self.output_input(h)
+            X_tild = (np.random.random_sample(self.input_size) < p_X_tild) * 1
+            error = reconstruction_error(X, X_tild)
             errors.append(error)
-            if (e+1) % 100 == 0:
+            if ((e+1) % 100 == 0) and (errors) :
                 epoch_stats = "Epoch {} Complete: Reconstruction Error: {:.7f}".format(
                     e + 1, error)
                 print(epoch_stats)
-
-        return errors
+                
+        if errors:
+            return errors
 
     def generate_image(self, num_images, gibbs_num_iter, reshape=None):
         """Return a list of generated images
@@ -149,6 +140,11 @@ class RBM:
         -------
         list[ndarray]
             list of images of shape input_size or reshape (if reshape != None)
+        
+        Raises
+        ------
+        ValueError
+            reshape size must be compatible with self.input_size
         """
         generated_images = []
 
@@ -163,8 +159,8 @@ class RBM:
             for j in range(gibbs_num_iter):
                 p_h = self.input_output(v)
                 h = (np.random.random_sample(self.output_size) < p_h) * 1
-                p_h = self.output_input(h)
-                v = (np.random.random_sample(self.input_size) < p_h) * 1
+                p_v = self.output_input(h)
+                v = (np.random.random_sample(self.input_size) < p_v) * 1
 
             generated_images.append(
                 v if reshape is None else v.reshape(reshape))

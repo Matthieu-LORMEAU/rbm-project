@@ -5,6 +5,24 @@ import gzip
 import numpy as np
 
 
+def reconstruction_error(X, X_tild):
+        """Return the reconstruction error score for an array of inputs
+
+        Parameters
+        ----------
+        X : ndarray
+            (number of samples, input_size)
+        X_tild : ndarray
+            (number of samples, input_size)
+
+        Returns
+        -------
+        float
+            reconstruction error
+        """
+        return np.linalg.norm(X - X_tild)
+
+
 def load_alpha_digits():
 
     if (os.path.isdir('data') == 0):
