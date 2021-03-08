@@ -53,7 +53,7 @@ class RBM:
         # shape data number * inputsize
         return expit(output @ self.W.T + self.a)
 
-    def train(self, X, batch_size, num_epochs=100, lr=0.1, errors=True):
+    def train(self, X, batch_size, num_epochs=100, lr=0.1, print_errors=True):
         """Train the RBM object
 
         Parameters
@@ -84,6 +84,7 @@ class RBM:
 
         n_samples = X.shape[0]
         errors = []
+        init_X = X.copy()
 
         for e in range(num_epochs):
             # shuffle data
@@ -112,18 +113,21 @@ class RBM:
                 self.W = self.W + grad_W * lr/n
 
             # reconstruction error
-            p_h = self.input_output(X)
-            h = (np.random.random_sample(self.output_size) < p_h) * 1
-            p_X_tild = self.output_input(h)
-            X_tild = (np.random.random_sample(self.input_size) < p_X_tild) * 1
-            error = reconstruction_error(X, X_tild)
-            errors.append(error)
-            if ((e+1) % 100 == 0) and (errors) :
-                epoch_stats = "Epoch {} Complete: Reconstruction Error: {:.7f}".format(
-                    e + 1, error)
-                print(epoch_stats)
-                
-        if errors:
+            if print_errors:
+                error = 0
+                for x in init_X:
+                    p_h = self.input_output(x)
+                    h = (np.random.random_sample(self.output_size) < p_h) * 1
+                    p_X_tild = self.output_input(h)
+                    x_tild = (np.random.random_sample(self.input_size) < p_X_tild) * 1
+                    error += reconstruction_error(x, x_tild)
+                errors.append(error/init_X.shape[0])
+                if (e+1) % 100 == 0 :
+                    epoch_stats = "Epoch {} Complete: Reconstruction Error: {:.7f}".format(
+                        e + 1, errors[-1])
+                    print(epoch_stats)
+
+        if print_errors:
             return errors
 
     def generate_image(self, num_images, gibbs_num_iter, reshape=None):
