@@ -76,7 +76,7 @@ class RBM:
         Raises
         ------
         ValueError
-            Input dimensions must be (n_samples, RBM.input_size)
+            Dimension Error
         """
         if len(X.shape) != 2 or X.shape[1] != self.input_size:
             raise ValueError(

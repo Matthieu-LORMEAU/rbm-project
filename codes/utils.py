@@ -6,7 +6,7 @@ import numpy as np
 
 
 def reconstruction_error(X, X_tild):
-        """Return the reconstruction error score for an array of inputs
+    """Return the reconstruction error score for an array of inputs
 
         Parameters
         ----------
@@ -20,7 +20,46 @@ def reconstruction_error(X, X_tild):
         float
             reconstruction error
         """
-        return np.linalg.norm(X - X_tild)
+    return np.linalg.norm(X - X_tild)
+
+
+def cross_entropy(predictions, targets):
+    """Compute the Cross Entropy
+
+    Parameters
+    ----------
+    predictions : ndarray
+        (n_samples, n_classes)
+    targets : ndarray
+        (n_samples, n_classes)
+
+    Returns
+    -------
+    Float
+        number
+    """
+    likelihood = targets * np.log(predictions)
+    return -np.sum(likelihood) / predictions.shape[0]
+
+
+def accuracy_score(predictions, targets):
+    """Compute accuracy score for one hot encoded vectors
+
+    Parameters
+    ----------
+    predictions : [type]
+        [description]
+    targets : [type]
+        [description]
+
+    Returns
+    -------
+    [type]
+        [description]
+    """
+    predictions = np.argmax(predictions, axis=1)
+    targets = np.argmax(targets, axis=1)
+    return np.sum(predictions == targets) * 1 / predictions.shape[0]
 
 
 def load_alpha_digits():
@@ -62,20 +101,19 @@ def load_mnist(train_data=True, test_data=False):
 
     """
     RESOURCES = [
-        'train-images-idx3-ubyte.gz',
-        'train-labels-idx1-ubyte.gz',
-        't10k-images-idx3-ubyte.gz',
-        't10k-labels-idx1-ubyte.gz']
+        'train-images-idx3-ubyte.gz', 'train-labels-idx1-ubyte.gz',
+        't10k-images-idx3-ubyte.gz', 't10k-labels-idx1-ubyte.gz'
+    ]
 
     if (os.path.isdir('data') == 0):
         os.mkdir('data')
     if (os.path.isdir('data/mnist') == 0):
         os.mkdir('data/mnist')
     for name in RESOURCES:
-        if (os.path.isfile('data/mnist/'+name) == 0):
-            url = 'http://yann.lecun.com/exdb/mnist/'+name
+        if (os.path.isfile('data/mnist/' + name) == 0):
+            url = 'http://yann.lecun.com/exdb/mnist/' + name
             r = requests.get(url, allow_redirects=True)
-            open('data/mnist/'+name, 'wb').write(r.content)
+            open('data/mnist/' + name, 'wb').write(r.content)
 
     return get_images(train_data, test_data), get_labels(train_data, test_data)
 
