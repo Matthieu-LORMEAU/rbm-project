@@ -257,6 +257,21 @@ class DNN:
         ]
         return layer_wise_output
 
+    def predict(self, X_test):
+        """Predict the label for X_test
+
+        Parameters
+        ----------
+        X_test : ndarray
+            (n_samples, data_size)
+
+        Returns
+        -------
+        ndarray
+            (n_samples,)
+        """        
+        return np.argmax(self.input_output_network(X_test)[-1], axis=1)
+
     def generate_image_DBN(self, num_images, gibbs_num_iter, reshape=None):
         """Return a list of generated images.
 
