@@ -47,7 +47,7 @@ class DNN:
         output = input @ rbm.W + rbm.b
         return np.exp(output) / np.sum(np.exp(output), axis=0)
 
-    def pretrain(self, X, batch_size, num_epochs=100, lr=0.1):
+    def pretrain(self, X, batch_size, num_epochs=100, lr=0.1, verbose=True):
         """Prerain the DNN using contrastive divergence.
 
         Parameters
@@ -83,9 +83,10 @@ class DNN:
             x_tild = self.output_input(h_L)
             error += reconstruction_error(x, x_tild)
 
-        to_print = "Pretraining Complete: Reconstruction Error: {:.7f}".format(
-            error / init_X.shape[0])
-        print(to_print)
+        if verbose:
+            to_print = "Pretraining Complete: Reconstruction Error: {:.7f}".format(
+                error / init_X.shape[0])
+            print(to_print)
 
         self.pretrained = True
 
@@ -125,7 +126,7 @@ class DNN:
             output = (np.random.random_sample(l.input_size) < p_v) * 1
         return output
 
-    def back_propagation(self, X, Y, X_test, Y_test, batch_size, num_epochs=100, lr=0.1):
+    def back_propagation(self, X, Y, X_test, Y_test, batch_size, num_epochs=100, lr=0.1, verbose=True):
         """Descent Gradient Algorithm for DNN
 
         Parameters
@@ -220,7 +221,7 @@ class DNN:
             test_total_score.append(accuracy_score(predictions, Y_test))
             test_total_loss.append(cross_entropy(predictions, Y_test))
 
-            if (e % 10) == 0:
+            if (e % 10) == 0 and verbose:
                 print(
                     "epoch: {0:d} (Loss: train {1:.2f}, test {2:.2f}) (Accuracy: train {3:.2f}, test {4:.2f})"
                     .format(e, train_total_loss[-1], test_total_loss[-1], train_total_score[-1], test_total_score[-1]))
