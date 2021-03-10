@@ -3,12 +3,11 @@ from scipy.special import expit
 import math
 from codes.utils import reconstruction_error, cross_entropy, accuracy_score
 from codes.RBM import RBM
-from collections import Iterable
-
+from typing import Iterable
 
 class DNN:
     """Create a deep neural network allowing for pretraining using contrastive divergence. 
-    Inputs are flattened to one dimensional arrays.
+    Implemented for classification.
     """
     def __init__(self, input_size: int, layers_sizes: Iterable[int],
                  output_size: int):
@@ -126,6 +125,7 @@ class DNN:
             output = (np.random.random_sample(l.input_size) < p_v) * 1
         return output
 
+    @profile
     def back_propagation(self, X, Y, batch_size, num_epochs=100, lr=0.1):
         """Descent Gradient Algorithm for DNN
 
@@ -215,6 +215,7 @@ class DNN:
             
         return total_loss, total_score
 
+    @profile
     def input_output_network(self, X):
         """Returns the outputs on each hidden layer of 
         the network as well as the probabilities on the output units.
@@ -298,6 +299,6 @@ class DNN:
         return generated_images
 
 
-def test_DNN(self, dnn: DNN, X_test, Y_test):
-    if self.trained:
-        ...
+    def test_DNN(self, X_test, Y_test):
+        if self.trained:
+            ...
