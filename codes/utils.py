@@ -41,6 +41,25 @@ def cross_entropy(predictions, targets):
     likelihood = targets * np.log(predictions)
     return -np.sum(likelihood) / predictions.shape[0]
 
+@njit(fastmath=True, parallel=True)
+def sigmoid(X, W, b):
+    """Sigmoid function
+
+    Parameters
+    ----------
+    X : [type]
+        [description]
+    W : [type]
+        [description]
+    b : [type]
+        [description]
+
+    Returns
+    -------
+    [type]
+        [description]
+    """    
+    return 1/(1 + np.exp(-X @ W + b))
 
 def accuracy_score(predictions, targets):
     """Compute accuracy score for one hot encoded vectors

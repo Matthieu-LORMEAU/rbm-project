@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.special import expit
 import math
-from codes.utils import reconstruction_error
+from codes.utils import reconstruction_error, sigmoid
 
 class RBM:
     """Create an RBM object."""
@@ -35,7 +35,7 @@ class RBM:
         ndarray:
             (number of samples, output_size)
         """
-        return expit(input @ self.W + self.b)
+        return sigmoid(input, self.W, self.b)
 
     def output_input(self, output):
         """Compute the input for a certain output
@@ -51,7 +51,7 @@ class RBM:
             (number of samples, input_size)
         """
         # shape data number * inputsize
-        return expit(output @ self.W.T + self.a)
+        return sigmoid(output, self.W.T, self.a)
 
     def train(self, X, batch_size, num_epochs=100, lr=0.1, print_errors=True):
         """Train the RBM object
