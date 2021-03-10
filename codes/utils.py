@@ -3,6 +3,7 @@ import requests
 import os
 import gzip
 import numpy as np
+from numba import njit
 
 
 def reconstruction_error(X, X_tild):
@@ -59,7 +60,7 @@ def sigmoid(X, W, b):
     [type]
         [description]
     """    
-    return 1/(1 + np.exp(-X @ W + b))
+    return 1/(1 + np.exp(-(np.dot(X.astype(np.float64), W) + b)))
 
 def accuracy_score(predictions, targets):
     """Compute accuracy score for one hot encoded vectors

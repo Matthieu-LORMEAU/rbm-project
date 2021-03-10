@@ -125,7 +125,6 @@ class DNN:
             output = (np.random.random_sample(l.input_size) < p_v) * 1
         return output
 
-    @profile
     def back_propagation(self, X, Y, batch_size, num_epochs=100, lr=0.1):
         """Descent Gradient Algorithm for DNN
 
@@ -215,7 +214,6 @@ class DNN:
             
         return total_loss, total_score
 
-    @profile
     def input_output_network(self, X):
         """Returns the outputs on each hidden layer of 
         the network as well as the probabilities on the output units.
