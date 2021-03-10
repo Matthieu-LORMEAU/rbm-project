@@ -125,7 +125,7 @@ class DNN:
             output = (np.random.random_sample(l.input_size) < p_v) * 1
         return output
 
-    def back_propagation(self, X, Y, batch_size, num_epochs=100, lr=0.1):
+    def back_propagation(self, X, Y, X_test, Y_test, batch_size, num_epochs=100, lr=0.1):
         """Descent Gradient Algorithm for DNN
 
         Parameters
@@ -133,6 +133,10 @@ class DNN:
         X : ndarray
             (n_samples, dim)
         Y : ndarray
+            (n_samples, classes)
+        X_test : ndarray
+            (n_samples, dim)
+        Y_test : ndarray
             (n_samples, classes)
         batch_size : int
         num_epochs : int, optional
@@ -143,7 +147,7 @@ class DNN:
         Returns
         -------
         tuple
-            list of losses, list of scores for each epoch
+            train loss, test loss, train score, test score
 
         Raises
         ------
@@ -155,8 +159,11 @@ class DNN:
                 "Input dimensions must be (n_samples, RBM.input_size)")
 
         n_samples = X.shape[0]
-        total_score = []
-        total_loss = []
+        train_total_score = []
+        train_total_loss = []
+        test_total_score = []
+        test_total_loss = []
+
         for e in range(num_epochs):
             # shuffle data
             indices = np.random.permutation(n_samples)
@@ -204,15 +211,21 @@ class DNN:
                 self.classif_RBM.W -= grads_W[0] * lr/n
                 self.classif_RBM.b -= grads_b[0] * lr/n
 
-            total_score.append(sum(epoch_score) / len(epoch_score))
-            total_loss.append(sum(epoch_loss) / len(epoch_loss))
+            # train loss & score
+            train_total_score.append(sum(epoch_score) / len(epoch_score))
+            train_total_loss.append(sum(epoch_loss) / len(epoch_loss))
+            # test loss & score
+            layer_wise_output = self.input_output_network(X_test)
+            predictions = layer_wise_output[-1]
+            test_total_score.append(accuracy_score(predictions, Y_test))
+            test_total_loss.append(cross_entropy(predictions, Y_test))
 
             if (e % 10) == 0:
                 print(
-                    "epoch: {0:d} (Loss: train {1:.2f}) (Accuracy: train {2:.2f})"
-                    .format(e, total_loss[-1], total_score[-1]))
+                    "epoch: {0:d} (Loss: train {1:.2f}, test {2:.2f}) (Accuracy: train {3:.2f}, test {4:.2f})"
+                    .format(e, train_total_loss[-1], test_total_loss[-1], train_total_score[-1], test_total_score[-1]))
             
-        return total_loss, total_score
+        return train_total_loss, test_total_loss, train_total_score, test_total_score
 
     def input_output_network(self, X):
         """Returns the outputs on each hidden layer of 
