@@ -4,6 +4,7 @@ import math
 from codes.utils import reconstruction_error, cross_entropy, accuracy_score
 from codes.RBM import RBM
 from typing import Iterable
+from tqdm import tqdm
 
 class DNN:
     """Create a deep neural network allowing for pretraining using contrastive divergence. 
@@ -72,9 +73,11 @@ class DNN:
         init_X = X.copy()
 
         # pretraining
-        for l in self.layers:
-            l.train(X, batch_size, num_epochs, lr, False)
-            X = l.input_output(X)
+        tq_layers = tqdm(range(len(self.layers)), leave=False)
+        for l in tq_layers:
+            tq_layers.set_description(f"Pretraining layer {l}/{len(self.layers)}")
+            self.layers[l].train(X, batch_size, num_epochs, lr, False)
+            X = self.layers[l].input_output(X)
 
         # reconstruction error
         error = 0
@@ -165,7 +168,9 @@ class DNN:
         test_total_score = []
         test_total_loss = []
 
-        for e in range(num_epochs):
+        tq_epochs = tqdm(range(num_epochs), leave=False)
+        for e in tq_epochs:
+            tq_epochs.set_description(f"Train epoch : {e}")
             # shuffle data
             indices = np.random.permutation(n_samples)
             X = X[indices, :]

@@ -85,8 +85,8 @@ test_neurons = [100, 300, 500, 700]
 test_num_data = [3000, 7000, 10000, 30000, 60000]
 
 gridtest_params(X_train, y_train, X_test, y_test,
-                num_layers=test_layers, pretrain=[False, True])
+                num_layers=test_layers, pretrain=[True])
 gridtest_params(X_train, y_train, X_test, y_test,
-                num_neurons=test_neurons, pretrain=[False, True])
+                num_neurons=test_neurons, pretrain=[True])
 gridtest_params(X_train, y_train, X_test, y_test,
-                num_data=test_num_data, pretrain=[False, True])
+                num_data=test_num_data, pretrain=[True])
