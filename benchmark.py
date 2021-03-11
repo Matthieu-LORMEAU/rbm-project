@@ -45,11 +45,11 @@ def gridtest_params(X_train, y_train, X_test, y_test, num_layers=[2], num_neuron
                             f"Num neurons : {n}")
 
                     dnn = DNN(cur_X_train.shape[1], [
-                                n for i in range(l)], cur_y_train.shape[1])
+                        n for i in range(l)], cur_y_train.shape[1])
 
                     if pre:
                         dnn.pretrain(cur_X_train, 128, num_epochs=100,
-                                    lr=0.1, verbose=False)
+                                     lr=0.1, verbose=False)
 
                     train_loss, test_loss, train_score, test_score = dnn.back_propagation(
                         cur_X_train, cur_y_train, X_test, one_hot_y_test, batch_size=128, num_epochs=100, lr=0.1, verbose=False)
@@ -78,11 +78,11 @@ X_test = np.concatenate(X_test)
 
 test_layers = [2, 3, 5, 7]
 test_neurons = [100, 300, 500, 700]
-test_num_data = [10000, 30000, 60000]
+test_num_data = [3000, 7000, 10000, 30000, 60000]
 
 gridtest_params(X_train, y_train, X_test, y_test,
-                num_layers=test_layers, pretrain=[False])
+                num_layers=test_layers, pretrain=[False, True])
 gridtest_params(X_train, y_train, X_test, y_test,
-                num_neurons=test_neurons, pretrain=[False])
+                num_neurons=test_neurons, pretrain=[False, True])
 gridtest_params(X_train, y_train, X_test, y_test,
-                num_data=test_num_data, pretrain=[False])
+                num_data=test_num_data, pretrain=[False, True])
