@@ -3,3 +3,5 @@ matplotlib==3.3.4
 scipy==1.6.0
 requests==2.25.1
 numba
+pandas
+tqdm
