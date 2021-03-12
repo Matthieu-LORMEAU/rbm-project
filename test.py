@@ -27,16 +27,18 @@ Y_test = np.zeros((label_test.size, label_test.max() + 1))
 Y_test[np.arange(label_test.size), label_test] = 1
 
 # pretraining
-dnn = DNN(784, [128], 10)
-indices = np.random.permutation(6000)
-dnn.pretrain(X_train[indices], 128, num_epochs=5, lr=0.1)
+dnn = DNN(784, [400, 100], 10)
+indices = np.random.permutation(10000)
+dnn.pretrain(X_train[indices], 128, num_epochs=20, lr=0.1)
 
 # training
-train_total_loss, test_total_loss, train_total_score, test_total_score = dnn.back_propagation(
-    X_train[indices],
-    Y_train[indices],
-    X_test[:1000],
-    Y_test[:1000],
-    batch_size=1000,
-    num_epochs=100,
-    lr=0.1)
+train_total_loss, train_total_score = dnn.back_propagation(X_train[indices],
+                                                           Y_train[indices],
+                                                           batch_size=128,
+                                                           num_epochs=100,
+                                                           lr=0.1)
+
+print('\n' + 31 * '-')
+print('------ Test Score : {0:.2f} ------'.format(
+    dnn.test_DNN(X_test, label_test)))
+print(31 * '-')
