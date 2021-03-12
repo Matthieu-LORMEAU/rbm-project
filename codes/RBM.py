@@ -54,7 +54,7 @@ class RBM:
         # shape data number * inputsize
         return sigmoid(output, self.W.T, self.a)
 
-    def train(self, X, batch_size, num_epochs=100, lr=0.1, print_errors=True):
+    def train(self, X, batch_size, num_epochs=100, lr=0.1, verbose=True):
         """Train the RBM object
 
         Parameters
@@ -116,7 +116,7 @@ class RBM:
                 self.W = self.W + grad_W * lr/n
 
             # reconstruction error
-            if print_errors:
+            if verbose:
                 error = 0
                 for x in init_X:
                     p_h = self.input_output(x)
@@ -130,7 +130,7 @@ class RBM:
                         e + 1, errors[-1])
                     print(epoch_stats)
 
-        if print_errors:
+        if verbose:
             return errors
 
     def generate_image(self, num_images, gibbs_num_iter, reshape=None):

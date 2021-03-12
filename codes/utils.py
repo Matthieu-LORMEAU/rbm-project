@@ -4,6 +4,7 @@ import os
 import gzip
 import numpy as np
 from numba import njit
+from config import ROOT_DIR
 
 
 def reconstruction_error(X, X_tild):
@@ -88,6 +89,7 @@ def accuracy_score(predictions, targets):
 
 
 def load_alpha_digits():
+    os.chdir(ROOT_DIR)
 
     if (os.path.isdir('data') == 0):
         os.mkdir('data')
@@ -125,6 +127,7 @@ def load_mnist(train_data=True, test_data=False):
     tuple[1] are labels (train & test)
 
     """
+    os.chdir(ROOT_DIR)
     RESOURCES = [
         'train-images-idx3-ubyte.gz', 'train-labels-idx1-ubyte.gz',
         't10k-images-idx3-ubyte.gz', 't10k-labels-idx1-ubyte.gz'

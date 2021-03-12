@@ -50,7 +50,7 @@ class DNN:
         return np.exp(output) / np.sum(np.exp(output), axis=0)
 
     def pretrain(self, X, batch_size, num_epochs=100, lr=0.1, verbose=True):
-        """Prerain the DNN using contrastive divergence.
+        """Pretrain the DNN using contrastive divergence.
 
         Parameters
         ----------
