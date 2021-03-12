@@ -26,19 +26,35 @@ Y_train[np.arange(label_train.size), label_train] = 1
 Y_test = np.zeros((label_test.size, label_test.max() + 1))
 Y_test[np.arange(label_test.size), label_test] = 1
 
-# pretraining
-dnn = DNN(784, [400, 100], 10)
+# choose 10000 random data
 indices = np.random.permutation(10000)
-dnn.pretrain(X_train[indices], 128, num_epochs=20, lr=0.1)
+
+# pretraining
+dnn_with = DNN(784, [400, 100], 10)
+dnn_with.pretrain(X_train[indices], 128, num_epochs=20, lr=0.1)
+
+# no pretraining
+dnn_without = DNN(784, [400, 100], 10)
 
 # training
-train_total_loss, train_total_score = dnn.back_propagation(X_train[indices],
+train_total_loss, train_total_score = dnn_with.back_propagation(X_train[indices],
+                                                           Y_train[indices],
+                                                           batch_size=128,
+                                                           num_epochs=100,
+                                                           lr=0.1)
+        
+train_total_loss, train_total_score = dnn_without.back_propagation(X_train[indices],
                                                            Y_train[indices],
                                                            batch_size=128,
                                                            num_epochs=100,
                                                            lr=0.1)
 
-print('\n' + 31 * '-')
-print('------ Test Score : {0:.2f} ------'.format(
-    dnn.test_DNN(X_test, label_test)))
-print(31 * '-')
+score_with = dnn_with.test_DNN(X_test, label_test)
+score_without = dnn_without.test_DNN(X_test, label_test)
+
+print('\n'+32*'-')
+print(10*'-'+' Test Score '+10*'-')
+print(32*'-')
+print(f'-- With    pretraining : {0:.2f} --'.format(score_with))
+print(f'-- Without pretraining : {0:.2f} --'.format(score_without))
+print(32*'-')
