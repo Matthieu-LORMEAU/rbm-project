@@ -1,5 +1,4 @@
 {
     "python.formatting.provider": "autopep8",
-    "jupyter.jupyterServerType": "local",
-    "python.pythonPath": "C:\\Users\\matth\\Miniconda3\\envs\\dl\\python.exe"
+    "jupyter.jupyterServerType": "local"
 }
