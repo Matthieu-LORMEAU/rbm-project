@@ -6,6 +6,7 @@ from codes.RBM import RBM
 from typing import Iterable
 from tqdm import tqdm
 
+
 class DNN:
     """Create a deep neural network allowing for pretraining using contrastive divergence. 
     Implemented for classification.
@@ -75,7 +76,8 @@ class DNN:
         # pretraining
         tq_layers = tqdm(range(len(self.layers)), leave=False)
         for l in tq_layers:
-            tq_layers.set_description(f"Pretraining layer {l}/{len(self.layers)}")
+            tq_layers.set_description(
+                f"Pretraining layer {l}/{len(self.layers)}")
             self.layers[l].train(X, batch_size, num_epochs, lr, False)
             X = self.layers[l].input_output(X)
 
@@ -129,7 +131,15 @@ class DNN:
             output = (np.random.random_sample(l.input_size) < p_v) * 1
         return output
 
-    def back_propagation(self, X, Y, X_test, Y_test, batch_size, num_epochs=100, lr=0.1, verbose=True):
+    def back_propagation(self,
+                         X,
+                         Y,
+                         X_test=None,
+                         Y_test=None,
+                         batch_size=128,
+                         num_epochs=100,
+                         lr=0.1,
+                         verbose=True):
         """Descent Gradient Algorithm for DNN
 
         Parameters
@@ -157,7 +167,7 @@ class DNN:
         ------
         ValueError
             Dimensions error
-        """        
+        """
         if len(X.shape) != 2 or X.shape[1] != self.input_size:
             raise ValueError(
                 "Input dimensions must be (n_samples, RBM.input_size)")
@@ -200,38 +210,57 @@ class DNN:
                 # -- over layers
                 for layer_idx in reversed(range(len(self.layers))):
                     # layers in reverse order
-                    if layer_idx == len(self.layers)-1:
-                        C = C @ self.classif_RBM.W.T * (layer_wise_output[layer_idx] * (1-layer_wise_output[layer_idx]))
+                    if layer_idx == len(self.layers) - 1:
+                        C = C @ self.classif_RBM.W.T * (
+                            layer_wise_output[layer_idx] *
+                            (1 - layer_wise_output[layer_idx]))
                     else:
-                        C = C @ self.layers[layer_idx+1].W.T * (layer_wise_output[layer_idx] * (1-layer_wise_output[layer_idx]))
+                        C = C @ self.layers[layer_idx + 1].W.T * (
+                            layer_wise_output[layer_idx] *
+                            (1 - layer_wise_output[layer_idx]))
 
                     if layer_idx == 0:
                         grads_W.append(batch.T @ C)
                     else:
-                        grads_W.append(layer_wise_output[layer_idx-1].T @ C)
+                        grads_W.append(layer_wise_output[layer_idx - 1].T @ C)
                     grads_b.append(np.sum(C))
                 # gradients updates
                 for layer_idx in range(len(self.layers)):
-                    self.layers[layer_idx].W -= grads_W[-layer_idx-1] * lr/n
-                    self.layers[layer_idx].b -= grads_b[-layer_idx-1] * lr/n
-                self.classif_RBM.W -= grads_W[0] * lr/n
-                self.classif_RBM.b -= grads_b[0] * lr/n
+                    self.layers[layer_idx].W -= grads_W[-layer_idx -
+                                                        1] * lr / n
+                    self.layers[layer_idx].b -= grads_b[-layer_idx -
+                                                        1] * lr / n
+                self.classif_RBM.W -= grads_W[0] * lr / n
+                self.classif_RBM.b -= grads_b[0] * lr / n
 
             # train loss & score
             train_total_score.append(sum(epoch_score) / len(epoch_score))
             train_total_loss.append(sum(epoch_loss) / len(epoch_loss))
             # test loss & score
-            layer_wise_output = self.input_output_network(X_test)
-            predictions = layer_wise_output[-1]
-            test_total_score.append(accuracy_score(predictions, Y_test))
-            test_total_loss.append(cross_entropy(predictions, Y_test))
+            if X_test != None:
+                layer_wise_output = self.input_output_network(X_test)
+                predictions = layer_wise_output[-1]
+                test_total_score.append(accuracy_score(predictions, Y_test))
+                test_total_loss.append(cross_entropy(predictions, Y_test))
 
             if (e % 10) == 0 and verbose:
-                print(
-                    "epoch: {0:d} (Loss: train {1:.2f}, test {2:.2f}) (Accuracy: train {3:.2f}, test {4:.2f})"
-                    .format(e, train_total_loss[-1], test_total_loss[-1], train_total_score[-1], test_total_score[-1]))
-            
-        return train_total_loss, test_total_loss, train_total_score, test_total_score
+                if X_test != None:
+                    print(
+                        "epoch: {0:d} (Loss: train {1:.2f}, test {2:.2f}) (Accuracy: train {3:.2f}, test {4:.2f})"
+                        .format(e, train_total_loss[-1], test_total_loss[-1],
+                                train_total_score[-1], test_total_score[-1]))
+                else:
+                    print(
+                        "epoch: {0:d} (Loss: train {1:.2f}) (Accuracy: train {2:.2f})"
+                        .format(e, train_total_loss[-1],
+                                train_total_score[-1]))
+
+        self.trained = True
+
+        if X_test != None:
+            return train_total_loss, test_total_loss, train_total_score, test_total_score
+        else:
+            return train_total_loss, train_total_score
 
     def input_output_network(self, X):
         """Returns the outputs on each hidden layer of 
@@ -249,7 +278,7 @@ class DNN:
             i_th position corresponds to the ouput of the i_th layer
             in the DNN for every sample
         """
-        layer_wise_output = [[] for i in range(len(self.layers)+1)]
+        layer_wise_output = [[] for i in range(len(self.layers) + 1)]
         # if X contains only one data
         if len(X.shape) == 1:
             X = X.reshape(1, -1)
@@ -287,7 +316,7 @@ class DNN:
         -------
         ndarray
             (n_samples,)
-        """        
+        """
         return np.argmax(self.input_output_network(X_test)[-1], axis=1)
 
     def generate_image_DBN(self, num_images, gibbs_num_iter, reshape=None):
@@ -330,7 +359,19 @@ class DNN:
 
         return generated_images
 
-
     def test_DNN(self, X_test, Y_test):
+        """Return accuracy score on test set
+
+        Parameters
+        ----------
+        X_test : ndarray
+            (n_samples, data_size)
+        Y_test : ndarray
+            (n_samples, 1)
+
+        Returns
+        -------
+        Float
+        """
         if self.trained:
-            ...
+            return accuracy_score(self.predict(X_test), Y_test)
