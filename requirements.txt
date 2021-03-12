@@ -1,7 +1,7 @@
+numba==0.52.0
+pandas==1.2.3
+tqdm==4.59.0
+requests==2.24.0
 numpy==1.20.1
-matplotlib==3.3.4
 scipy==1.6.0
-requests==2.25.1
-numba
-pandas
-tqdm
+matplotlib==3.3.4
