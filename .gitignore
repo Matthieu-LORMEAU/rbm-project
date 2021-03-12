@@ -156,3 +156,5 @@ dmypy.json
 
 data/
 .vscode/settings.json
+
+_annexes_rapport/
