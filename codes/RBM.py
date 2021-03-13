@@ -87,9 +87,9 @@ class RBM:
         errors = []
         init_X = X.copy()
 
-        tq_epochs = tqdm(range(num_epochs), leave=False)
-        for e in tq_epochs:
-            tq_epochs.set_description(f"Layer pretrain epoch : {e}")
+        # tq_epochs = tqdm(range(num_epochs), leave=False)
+        for e in range(num_epochs):
+            # tq_epochs.set_description(f"Layer pretrain epoch : {e}")
             # shuffle data
             X = X[np.random.permutation(n_samples), :]
             for b in range(int(np.ceil(n_samples / batch_size))):
