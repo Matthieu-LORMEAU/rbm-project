@@ -139,7 +139,7 @@ def load_mnist(train_data=True, test_data=False):
         os.mkdir('data/mnist')
     for name in RESOURCES:
         if (os.path.isfile('data/mnist/' + name) == 0):
-            url = 'https://github.com/HIPS/hypergrad/tree/master/data/mnist' + name
+            url = 'https://github.com/HIPS/hypergrad/raw/master/data/mnist/' + name
             r = requests.get(url, allow_redirects=True)
             open('data/mnist/' + name, 'wb').write(r.content)
 
