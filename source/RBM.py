@@ -88,7 +88,7 @@ class RBM:
         errors = []
         init_X = X.copy()
 
-        tq_epochs = tqdm(range(num_epochs), leave=True, position=0, disable=no_tqdm)
+        tq_epochs = tqdm(range(num_epochs), leave=False, position=0, disable=no_tqdm)
         for e in tq_epochs:
             tq_epochs.set_description(f"Layer pretrain epoch : {e}")
             # shuffle data
