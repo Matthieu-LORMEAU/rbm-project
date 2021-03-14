@@ -80,7 +80,7 @@ class DNN:
                 f"## Num layers : {len(self.layers)}\n## Num neurons : {self.layers[0].output_size}\n## Num training samples : {X.shape[0]}\n")
 
         # pretraining
-        tq_layers = tqdm(range(len(self.layers)), leave=False, disable=no_tqdm)
+        tq_layers = tqdm(range(len(self.layers)), leave=True, position=0, disable=no_tqdm)
         for l in tq_layers:
             tq_layers.set_description(
                 f"Pretraining layer {l}/{len(self.layers)}")
@@ -193,7 +193,7 @@ class DNN:
         test_total_score = []
         test_total_loss = []
 
-        tq_epochs = tqdm(range(num_epochs), leave=False, disable=no_tqdm)
+        tq_epochs = tqdm(range(num_epochs), leave=True, position=0, disable=no_tqdm)
         for e in tq_epochs:
 
             # shuffle data
@@ -271,7 +271,7 @@ class DNN:
             print("DONE.\n")
         self.trained = True
 
-        if X_test != None:
+        if X_test is not None:
             return train_total_loss, test_total_loss, train_total_score, test_total_score
         else:
             return train_total_loss, train_total_score
