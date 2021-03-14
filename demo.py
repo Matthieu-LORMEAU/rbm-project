@@ -1,5 +1,5 @@
-from codes.utils import load_mnist
-from codes.DNN import DNN
+from source.utils import load_mnist
+from source.DNN import DNN
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -55,6 +55,6 @@ score_without = dnn_without.test_DNN(X_test, label_test)
 print('\n'+32*'-')
 print(10*'-'+' Test Score '+10*'-')
 print(32*'-')
-print(f'-- With    pretraining : {0:.2f} --'.format(score_with))
-print(f'-- Without pretraining : {0:.2f} --'.format(score_without))
+print('-- With    pretraining : {0:.2f} --'.format(score_with))
+print('-- Without pretraining : {0:.2f} --'.format(score_without))
 print(32*'-')

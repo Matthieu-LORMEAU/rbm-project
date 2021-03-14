@@ -1,8 +1,7 @@
 import numpy as np
-from scipy.special import expit
 import math
-from codes.utils import reconstruction_error, cross_entropy, accuracy_score
-from codes.RBM import RBM
+from source.utils import reconstruction_error, cross_entropy, accuracy_score
+from source.RBM import RBM
 from typing import Iterable
 from tqdm import tqdm
 
@@ -11,10 +10,11 @@ class DNN:
     """Create a deep neural network allowing for pretraining using contrastive divergence. 
     Implemented for classification.
     """
+
     def __init__(self, input_size: int, layers_sizes: Iterable[int],
                  output_size: int):
         """Instantiate a DNN
-        
+
         Parameters
         ----------
         input_size : int
@@ -49,7 +49,7 @@ class DNN:
         output = input @ rbm.W + rbm.b
         return np.exp(output) / np.sum(np.exp(output), axis=0)
 
-    def pretrain(self, X, batch_size, num_epochs=100, lr=0.1, verbose=True):
+    def pretrain(self, X, batch_size, num_epochs=100, lr=0.1, verbose=True, no_tqdm=False):
         """Pretrain the DNN using contrastive divergence.
 
         Parameters
@@ -73,8 +73,14 @@ class DNN:
 
         init_X = X.copy()
 
+        if verbose:
+            print(
+                f"################## Pretraining DNN ##################")
+            print(
+                f"## Num layers : {len(self.layers)}\n## Num neurons : {self.layers[0].output_size}\n## Num training samples : {X.shape[0]}\n")
+
         # pretraining
-        tq_layers = tqdm(range(len(self.layers)), leave=False)
+        tq_layers = tqdm(range(len(self.layers)), leave=False, disable=no_tqdm)
         for l in tq_layers:
             tq_layers.set_description(
                 f"Pretraining layer {l}/{len(self.layers)}")
@@ -92,7 +98,7 @@ class DNN:
             to_print = "Pretraining Complete: Reconstruction Error: {:.7f}".format(
                 error / init_X.shape[0])
             print(to_print)
-
+            print("DONE.\n")
         self.pretrained = True
 
     def input_output(self, input):
@@ -139,7 +145,8 @@ class DNN:
                          batch_size=128,
                          num_epochs=100,
                          lr=0.1,
-                         verbose=True):
+                         verbose=True,
+                         no_tqdm=False):
         """Descent Gradient Algorithm for DNN
 
         Parameters
@@ -172,15 +179,23 @@ class DNN:
             raise ValueError(
                 "Input dimensions must be (n_samples, RBM.input_size)")
 
+
+        if verbose:
+            pretrained_str = " pretrained" if self.pretrained else ""
+            print(
+                f"################## Training{pretrained_str} DNN  ##################")
+            print(
+                f"## Num layers : {len(self.layers)}\n## Num neurons : {self.layers[0].output_size}\n## Num training samples : {X.shape[0]}\n## Classification layer of size : {self.classif_RBM.output_size}\n")
+        
         n_samples = X.shape[0]
         train_total_score = []
         train_total_loss = []
         test_total_score = []
         test_total_loss = []
 
-        tq_epochs = tqdm(range(num_epochs), leave=False)
+        tq_epochs = tqdm(range(num_epochs), leave=False, disable=no_tqdm)
         for e in tq_epochs:
-            tq_epochs.set_description(f"Train epoch : {e}")
+
             # shuffle data
             indices = np.random.permutation(n_samples)
             X = X[indices, :]
@@ -237,24 +252,23 @@ class DNN:
             train_total_score.append(sum(epoch_score) / len(epoch_score))
             train_total_loss.append(sum(epoch_loss) / len(epoch_loss))
             # test loss & score
-            if X_test != None:
+            if X_test is not None:
                 layer_wise_output = self.input_output_network(X_test)
                 predictions = layer_wise_output[-1]
                 test_total_score.append(accuracy_score(predictions, Y_test))
                 test_total_loss.append(cross_entropy(predictions, Y_test))
 
-            if (e % 10) == 0 and verbose:
-                if X_test != None:
-                    print(
-                        "epoch: {0:d} (Loss: train {1:.2f}, test {2:.2f}) (Accuracy: train {3:.2f}, test {4:.2f})"
-                        .format(e, train_total_loss[-1], test_total_loss[-1],
-                                train_total_score[-1], test_total_score[-1]))
-                else:
-                    print(
-                        "epoch: {0:d} (Loss: train {1:.2f}) (Accuracy: train {2:.2f})"
-                        .format(e, train_total_loss[-1],
-                                train_total_score[-1]))
+            if X_test is not None:
+                m = "epoch: {0:d} (Loss: train {1:.2f}, test {2:.2f}) (Accuracy: train {3:.2f}, test {4:.2f})".format(e, train_total_loss[-1], test_total_loss[-1],
+                                                                                                                      train_total_score[-1], test_total_score[-1])
+            else:
+                m = "epoch: {0:d} (Loss: train {1:.2f}) (Accuracy: train {2:.2f})".format(e, train_total_loss[-1],
+                                                                                          train_total_score[-1])
+            tq_epochs.set_description(m)
 
+        if verbose:
+            print(m)
+            print("DONE.\n")
         self.trained = True
 
         if X_test != None:
