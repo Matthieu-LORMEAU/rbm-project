@@ -1,7 +1,6 @@
 import numpy as np
-from scipy.special import expit
 import math
-from codes.utils import reconstruction_error, sigmoid
+from source.utils import reconstruction_error, sigmoid
 from tqdm import tqdm
 
 class RBM:
@@ -54,7 +53,7 @@ class RBM:
         # shape data number * inputsize
         return sigmoid(output, self.W.T, self.a)
 
-    def train(self, X, batch_size, num_epochs=100, lr=0.1, verbose=True):
+    def train(self, X, batch_size, num_epochs=100, lr=0.1, verbose=True, no_tqdm=False):
         """Train the RBM object
 
         Parameters
@@ -83,13 +82,15 @@ class RBM:
             raise ValueError(
                 "Input dimensions must be (n_samples, RBM.input_size)")
 
+        
+
         n_samples = X.shape[0]
         errors = []
         init_X = X.copy()
 
-        # tq_epochs = tqdm(range(num_epochs), leave=False)
-        for e in range(num_epochs):
-            # tq_epochs.set_description(f"Layer pretrain epoch : {e}")
+        tq_epochs = tqdm(range(num_epochs), leave=False, position=0, disable=no_tqdm)
+        for e in tq_epochs:
+            tq_epochs.set_description(f"Layer pretrain epoch : {e}")
             # shuffle data
             X = X[np.random.permutation(n_samples), :]
             for b in range(int(np.ceil(n_samples / batch_size))):

@@ -1,8 +1,10 @@
-from codes.utils import load_mnist
-from codes.DNN import DNN
+from source.utils import load_mnist
+from source.DNN import DNN
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
+from config import ROOT_DIR
+import os
 
 
 def make_range_or_tqdm(l, leave=False):
@@ -10,6 +12,10 @@ def make_range_or_tqdm(l, leave=False):
 
 
 def gridtest_params(X_train, y_train, X_test, y_test, num_layers=[2], num_neurons=[200], num_data=[10000], pretrain=[True]):
+
+    os.chdir(ROOT_DIR)
+    if (os.path.isdir('test_outputs') == 0):
+        os.mkdir('test_outputs')
 
     print("\n######################################## GRIDTEST PARAMS ############################################\n")
     print(
