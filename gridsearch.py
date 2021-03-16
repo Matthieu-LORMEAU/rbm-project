@@ -28,8 +28,8 @@ Y_test[np.arange(label_test.size), label_test] = 1
 
 # Grid Search parameters
 layers = [[500, 200], [600, 400, 200], [600, 300, 100]]
-epochs_pretrain = [1]
-epochs_train = [1]
+epochs_pretrain = [100]
+epochs_train = [350]
 batch_size = [128, 512]
 learning_rate = [0.01, 0.1]
 
@@ -48,8 +48,8 @@ print('\nTotal combinations :', len(parameters))
 for comb_idx in range(len(parameters)):
 
     # parameters definition
-    print('\n#################### Combination n°',
-          comb_idx, "####################")
+    print('\n'+18*'-'+' Combination n°'+
+          str(comb_idx)+' '+18*'-'+"\n")
     layer = parameters[comb_idx][0]
     epoch_pretrain = parameters[comb_idx][1]
     epoch_train = parameters[comb_idx][2]
