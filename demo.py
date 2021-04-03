@@ -3,6 +3,17 @@ from source.DNN import DNN
 import matplotlib.pyplot as plt
 import numpy as np
 
+print('''
+########################## DEMO ##########################
+This is a short demo to show the power of pretaining a DNN using Deep Belief networks.
+
+The number of epochs of gradient descent is intentionnally low (10) to have a quick runtime.
+Of course, a higher number of epochs is required to fully converge.
+
+However, even with such a low number of epochs, the pretrained DNN is able to reach ~71% accuracy
+compared to ~11% without pretraining, thus showing the power of DBNs.
+''')
+
 # load mnist
 mnist = load_mnist(train_data=True, test_data=True)
 img_train = mnist[0][0]
@@ -37,16 +48,17 @@ dnn_with.pretrain(X_train[indices], 128, num_epochs=20, lr=0.1)
 dnn_without = DNN(784, [400, 100], 10)
 
 # training
+
 train_total_loss, train_total_score = dnn_with.back_propagation(X_train[indices],
                                                            Y_train[indices],
                                                            batch_size=128,
-                                                           num_epochs=100,
+                                                           num_epochs=10,
                                                            lr=0.1)
         
 train_total_loss, train_total_score = dnn_without.back_propagation(X_train[indices],
                                                            Y_train[indices],
                                                            batch_size=128,
-                                                           num_epochs=100,
+                                                           num_epochs=10,
                                                            lr=0.1)
 
 score_with = dnn_with.test_DNN(X_test, label_test)
